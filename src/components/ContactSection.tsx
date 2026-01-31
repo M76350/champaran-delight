@@ -1,7 +1,25 @@
 import { Phone, MessageCircle, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useRef, useState } from 'react';
 
 export function ContactSection() {
+  const iframeRef = useRef(null);
+  const [loadedOnce, setLoadedOnce] = useState(false);
+
+  const handleIframeLoad = () => {
+    if (!loadedOnce) {
+      setLoadedOnce(true); // First normal load → ignore
+      return;
+    }
+
+    // Second load = submit ke baad thank you page → reload blank form
+    setTimeout(() => {
+      if (iframeRef.current) {
+        iframeRef.current.src = iframeRef.current.src;
+      }
+    }, 1200);
+  };
+
   const contactInfo = [
     {
       icon: Phone,
@@ -37,10 +55,11 @@ export function ContactSection() {
   return (
     <section id="contact" className="py-16 md:py-24 bg-gradient-warm">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
+
+        {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            <span className="en-text">Contact Us</span>
+            <span className="en-text">Contact Us</span>{' '}
             <span className="hi-text hindi-text">संपर्क करें</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -52,24 +71,26 @@ export function ContactSection() {
             </span>
           </p>
         </div>
-        {/* <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.3875622302407!2d84.63378787595126!3d24.81641644701754!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398d21a6480a5333%3A0xd7b95d3b5ade425a!2sPurvi%20Champaran%20Handi%20Meat%2C%20Rafiganj!5e0!3m2!1sen!2sin!4v1769859594551!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> */}
+
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Google Maps */}
-          <div className="rounded-2xl overflow-hidden shadow-xl border border-border/50 h-[400px]">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.3875622302407!2d84.63378787595126!3d24.81641644701754!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398d21a6480a5333%3A0xd7b95d3b5ade425a!2sPurvi%20Champaran%20Handi%20Meat%2C%20Rafiganj!5e0!3m2!1sen!2sin!4v1769859594551!5m2!1sen!2sin"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Restaurant Location"
-            />
+
+          {/* Google Form */}
+          <div className="rounded-2xl overflow-hidden shadow-xl border border-border/50">
+            <div className="relative w-full h-[85vh] sm:h-[90vh]">
+              <iframe
+                ref={iframeRef}
+                onLoad={handleIframeLoad}
+                src="https://docs.google.com/forms/d/e/1FAIpQLSfj44BnzQozZITIc9N4YXTDpGLcksTWCEOhVtHgEEYTybfjDw/viewform?embedded=true"
+                className="absolute inset-0 w-full h-full border-0"
+                loading="lazy"
+                title="Order Form"
+              />
+            </div>
           </div>
 
           {/* Contact Info */}
           <div className="space-y-6">
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {contactInfo.map((info, index) => (
                 <a
@@ -77,21 +98,25 @@ export function ContactSection() {
                   href={info.link || '#'}
                   target={info.link?.startsWith('http') ? '_blank' : undefined}
                   rel={info.link?.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="flex items-start gap-4 p-5 rounded-xl bg-card border border-border/50 hover-lift cursor-pointer"
+                  className="flex items-start gap-4 p-5 rounded-xl bg-card border border-border/50 hover:shadow-lg transition"
                 >
                   <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-secondary text-primary-foreground">
                     <info.icon className="h-6 w-6" />
                   </div>
+
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">
-                      <span className="en-text">{info.labelEn}</span>
+                      <span className="en-text">{info.labelEn}</span>{' '}
                       <span className="hi-text hindi-text">{info.labelHi}</span>
                     </h4>
+
                     <p className="text-muted-foreground">
                       {info.value || (
                         <>
                           <span className="en-text">{info.valueEn}</span>
-                          <span className="hi-text hindi-text">{info.valueHi}</span>
+                          <span className="hi-text hindi-text">
+                            {info.valueHi}
+                          </span>
                         </>
                       )}
                     </p>
@@ -103,9 +128,12 @@ export function ContactSection() {
             {/* CTA */}
             <div className="bg-card rounded-2xl p-6 border border-border/50 text-center">
               <h3 className="text-xl font-bold mb-2">
-                <span className="en-text">Ready to Order?</span>
-                <span className="hi-text hindi-text">ऑर्डर करने के लिए तैयार?</span>
+                <span className="en-text">Ready to Order?</span>{' '}
+                <span className="hi-text hindi-text">
+                  ऑर्डर करने के लिए तैयार?
+                </span>
               </h3>
+
               <p className="text-muted-foreground mb-4">
                 <span className="en-text">
                   Order via WhatsApp for quick delivery or pickup
@@ -114,6 +142,7 @@ export function ContactSection() {
                   त्वरित डिलीवरी या पिकअप के लिए व्हाट्सएप पर ऑर्डर करें
                 </span>
               </p>
+
               <a
                 href="https://wa.me/917424961362?text=Hi,%20I%20would%20like%20to%20place%20an%20order"
                 target="_blank"
@@ -125,10 +154,25 @@ export function ContactSection() {
                 >
                   <MessageCircle className="h-5 w-5" />
                   <span className="en-text">Order on WhatsApp</span>
-                  <span className="hi-text hindi-text">व्हाट्सएप पर ऑर्डर करें</span>
+                  <span className="hi-text hindi-text">
+                    व्हाट्सएप पर ऑर्डर करें
+                  </span>
                 </Button>
               </a>
             </div>
+
+            {/* Google Map */}
+            <div className="rounded-xl overflow-hidden shadow-lg border border-border/50">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.3875622302407!2d84.63378787595126!3d24.81641644701754!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398d21a6480a5333%3A0xd7b95d3b5ade425a!2sPurvi%20Champaran%20Handi%20Meat%2C%20Rafiganj!5e0!3m2!1sen!2sin!4v1769859594551!5m2!1sen!2sin"
+                className="w-full h-[400px] border-0"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Restaurant Location"
+              />
+            </div>
+
           </div>
         </div>
       </div>
